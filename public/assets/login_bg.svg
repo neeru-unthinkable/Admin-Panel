@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="625px" height="1200px" viewBox="0 0 625 1200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group 21</title>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-21">
+            <rect id="Rectangle" fill="#01D684" x="0" y="0" width="624.518119" height="1199.07479"></rect>
+            <path d="M0,0 L624.518119,0 C491.962066,20.2616911 402.9266,57.4542448 357.411719,111.577661 C269.671071,221.147059 312.259059,261.98816 205.928604,358.313295 C145.878195,401.31903 77.2353267,422.821897 0,422.821897 L0,0 Z" id="Rectangle" fill="url(#linearGradient-1)"></path>
+            <path d="M0,777.178103 L624.518119,777.178103 C491.962066,797.439794 402.9266,834.632348 357.411719,888.755765 C269.671071,998.325162 312.259059,1039.16626 205.928604,1135.4914 C145.878195,1178.49713 77.2353267,1200 0,1200 L0,777.178103 Z" id="Rectangle-Copy-3" fill="url(#linearGradient-2)" transform="translate(312.259059, 988.589052) scale(-1, -1) translate(-312.259059, -988.589052) "></path>
+        </g>
+    </g>
+</svg>
