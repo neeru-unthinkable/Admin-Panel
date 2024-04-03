@@ -8,12 +8,12 @@ function LeftSection(props) {
   const classes = useStyles();
 
   return (
-    <div className='LeftSection'>
+    <>
       <Logo className = {classes.logo}/>
-        <Typography variant='h6'>
+        <Typography variant='h5'className={classes.text}>
         {props.text}
         </Typography>
-    </div>
+    </>
   )
 }
 

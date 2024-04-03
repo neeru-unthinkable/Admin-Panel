@@ -1,11 +1,12 @@
 import React from 'react'
-import './footer.css'
+// import './footer.css'
 import { Typography } from '@material-ui/core'
+// import Logo from '../Logo'
 
 
-function Footer() {
+function Footer({className}) {
   return (
-    <div className='footer'>
+    <div className= {className}>
         <Typography variant='subtitle1'>
             Copyright ©2022, Lending. All right reserved.
         </Typography>

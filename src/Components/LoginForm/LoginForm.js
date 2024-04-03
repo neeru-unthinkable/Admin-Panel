@@ -6,7 +6,10 @@ import {
   IconButton,
   InputAdornment,
 } from "@material-ui/core";
-import "./loginForm.css"
+import "./loginForm.css";
+import Links from "../Links/Links";
+import { setItemToLocalStorage } from "../../Helpers/localStoragehelper";
+import RESPONSE from "../../constants/response";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +18,8 @@ function LoginForm() {
     username: "",
     password: "",
   });
+
+  const isSignInEnabled = signInData.username && signInData.password;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,9 +34,23 @@ function LoginForm() {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
+  // const handleClick = () => {
+  //   localStorage.setItem("lending_admin", JSON.stringify({
+  //     username: "prakhar.bansal",
+  //     token:
+  //       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTIwNTY4ODEsImRhdGEiOnsidXNlcm5hbWUiOiJwcmFraGFyLmJhbnNhbCIsInJvbGUiOiJhZG1pbiJ9LCJpYXQiOjE3MTIwNTU5ODF9.zOwEQKQko8A3FuIB-Z39yTNpC7It_x8OwC2ktO-EXJw",
+  //     refreshToken:
+  //       "eyJhbGci{...props}OiJIUzI1NiJ9.eyJzdWIiOiJzaHJpc2h0aS5zIiwiZXhwIjoxNjU0ODUzNjk4LCJpYXQiOjE2NTQ4NTIxOTh9.hY31WOtaPm-jU7I9rc888v2EXoimK9EyZ1ClgF9rdvo",
+  // }));
+  // };
+
+  const handleClick = () => {
+    setItemToLocalStorage("lending_admin", RESPONSE.SIGN_IN);
+  }
+
   return (
     <div className="loginForm">
-      <CssBaseline/>
+      <CssBaseline />
       <TextField
         variant="outlined"
         id="outlined-helperText"
@@ -43,7 +62,7 @@ function LoginForm() {
         onChange={handleChange}
       />
       <TextField
-      variant="outlined"
+        variant="outlined"
         id="outlined-adornment-password"
         type={showPassword ? "text" : "password"}
         label="Password"
@@ -65,8 +84,15 @@ function LoginForm() {
           ),
         }}
       />
+      <Links
+        buttonText="SIGN IN"
+        pageText="Not a user yet? "
+        pageLink="SIGN UP"
+        disabled={!isSignInEnabled}
+        to="/signup"
+        onClick={handleClick}
+      />
     </div>
-    // <></>
   );
 }
 

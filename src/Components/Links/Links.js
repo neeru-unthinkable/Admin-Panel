@@ -3,20 +3,24 @@ import { Typography, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 // import LoginForm from "../LoginForm/LoginForm";
 import "./links.css"
+import styles from "./styles";
 
 
 function Links(props) {
+// console.log("🚀 ~ Links ~ props:", props);
 
-  const isSignInDisabled = false; 
+  const classes = styles();
     
   return (
-    <div className="links">
-      <Button variant="contained" color="primary" disabled={isSignInDisabled}>
+    <div className={classes.links}>
+      <Link to = '/dashboard'>
+      <Button variant="contained" color="primary" disabled={props.disabled} onClick={props.onClick}>
         {props.buttonText}
-      </Button>
-      <Typography className="sign">
+      </Button>     
+      </Link>
+      <Typography className={classes.sign}>
         {props.pageText}
-        <Link to="/signup" className="sign">
+        <Link to= {props.to}>
           {props.pageLink}
         </Link>
       </Typography>

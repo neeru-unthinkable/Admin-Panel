@@ -12,15 +12,22 @@
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
+    <!-- <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
-    />
+    /> -->
 
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>React App</title>
+    <style>
+      @font-face {
+        font-family: 'Indivisible';
+        src: local('Indivisible Font'), local('Indivisible-Font'), url('%PUBLIC_URL%/font/Indivisible-Regular.ttf') format('truetype');
+      }
+    </style>
   </head>
   <body>
+    <img src="assets/noService.svg" style="display: none;" />
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
   </body>

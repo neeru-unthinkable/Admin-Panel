@@ -1,9 +1,14 @@
-import React from 'react'
+import React from "react";
 
-function Logo({className}) {
+function Logo({ className }) {
   return (
-        <img className={className} src='assets/PinelabsLogo.png' alt='logo' style={{height:"50px"}}/>
- )
+    <img
+      className={className}
+      src="assets/PinelabsLogo.png"
+      alt="logo"
+      style={{ height: "40px" }}
+    />
+  );
 }
 
-export default Logo
+export default Logo;

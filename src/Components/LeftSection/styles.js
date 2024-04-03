@@ -5,6 +5,9 @@ const useStyles = makeStyles({
     position: 'absolute',
     top: '15px',
     left: '30px'
+   },
+   text: {
+      marginBottom:"25px"
    }
 })
 
