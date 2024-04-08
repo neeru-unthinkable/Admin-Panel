@@ -1,27 +1,26 @@
-import React, { Component } from 'react';
-import Offline from '../Components/offline';
+import React, { Component } from "react";
+import Offline from "../components/Offline";
 
 export default function (ComposedComponent) {
   class NetworkDetector extends Component {
     state = {
-      isDisconnected: false
-    }
+      isDisconnected: false,
+    };
 
     componentDidMount() {
       this.handleConnectionChange();
-      window.addEventListener('online', this.handleConnectionChange);
-      window.addEventListener('offline', this.handleConnectionChange);
+      window.addEventListener("online", this.handleConnectionChange);
+      window.addEventListener("offline", this.handleConnectionChange);
     }
 
     componentWillUnmount() {
-      window.removeEventListener('online', this.handleConnectionChange);
-      window.removeEventListener('offline', this.handleConnectionChange);
+      window.removeEventListener("online", this.handleConnectionChange);
+      window.removeEventListener("offline", this.handleConnectionChange);
     }
 
-
     handleConnectionChange = () => {
-      const condition = navigator.onLine ? 'online' : 'offline';
-      if (condition === 'online') {
+      const condition = navigator.onLine ? "online" : "offline";
+      if (condition === "online") {
         // const webPing = setInterval(
         //   () => {
         //     fetch('//google.com', {
@@ -34,16 +33,18 @@ export default function (ComposedComponent) {
         //     }).catch(() => this.setState({ isDisconnected: true }) )
         //   }, 2000);
         // return;
-        return this.setState({isDisconnected: false});
+        return this.setState({ isDisconnected: false });
       }
 
       return this.setState({ isDisconnected: true });
-    }
+    };
 
     render() {
       const { isDisconnected } = this.state;
-      return (
-        isDisconnected? <Offline/> : <ComposedComponent {...this.props} />
+      return isDisconnected ? (
+        <Offline />
+      ) : (
+        <ComposedComponent {...this.props} />
       );
     }
   }

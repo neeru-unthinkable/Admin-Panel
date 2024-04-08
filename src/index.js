@@ -1,17 +1,23 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { ThemeProvider } from '@material-ui/core';
-import theme from './theme';
+import ReactDOM from "react-dom";
+import { CssBaseline, ThemeProvider } from "@material-ui/core";
+
+import "./index.css";
+import App from "./App";
+import React from "react";
+import theme from "./theme";
+import reportWebVitals from "./reportWebVitals";
+import { BrowserRouter } from "react-router-dom/cjs/react-router-dom.min";
 
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme = {theme}>
-      <App />
-    </ThemeProvider>
-  </React.StrictMode>, document.getElementById('root')
+    <BrowserRouter>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <App />
+      </ThemeProvider>
+    </BrowserRouter>
+  </React.StrictMode>,
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function
