@@ -10,7 +10,9 @@ export const AdminContextWrapper = ({ children }) => {
     setData((prev) => ({ ...prev, ...updatedData }));
   }, [setData]);
 
-  const clearData = useCallback(() => setData({}), [setData]);
+  const clearData = useCallback(() => {
+    setData({});
+  }, [setData]);
 
   return (
     <AdminContext.Provider

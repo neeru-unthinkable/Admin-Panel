@@ -3,14 +3,14 @@ import React from "react";
 import Logo from "../../../../components/Logo";
 import { useStyles } from "./styles";
 
-function LeftSection(props) {
+function LeftSection({text}) {
   const classes = useStyles();
 
   return (
     <>
       <Logo className={classes.logo} />
       <Typography variant="h5" className={classes.text}>
-        {props.text}
+        {text}
       </Typography>
     </>
   );

@@ -1,3 +1,5 @@
+import ROUTES from "./routes";
+
 const CONSTANTS = {
     SIGNUP: 'Sign Up',
     TO_CONTINUE: 'to continue',
@@ -68,6 +70,9 @@ const VARIANTS = {
 
 const AUTH_CONFIG = {
     AUTH_SESSION_INFO : 'auth_session_info',
+    ADMIN_STORAGE: 'admin_storage',
+    NON_AUTHENTICATED_ROUTES: [ROUTES.LOGIN, ROUTES.SIGNUP, ROUTES.LOGOUT],
+
 }
 
 export {

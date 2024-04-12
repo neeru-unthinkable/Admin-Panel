@@ -8,6 +8,7 @@ const post = ({
     timeout,
     formData,
     token, 
+    params
 }) => {
     const configOptions = {
         url,
@@ -15,6 +16,7 @@ const post = ({
         headers,
         method: 'post',
         timeout: timeout || 5 * 60 * 1000,
+        params
     };
     if (token) {
         configOptions.headers = {
@@ -29,4 +31,25 @@ const post = ({
     return server(configOptions);
 }
 
-export { post };
+const get = ({
+    url, 
+    headers, 
+    timeout, 
+    token
+}) => {
+    const configOptions = {
+        url, 
+        headers, 
+        method: "get", 
+        timeout: timeout || 5 * 60 * 1000,
+    };
+    if(token){
+        configOptions.headers = {
+            ...configOptions.headers,
+            Authorization:`Bearer ${token}`,
+        };
+    }
+    return server(configOptions);
+
+}
+export { post , get };

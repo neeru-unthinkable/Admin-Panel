@@ -1,19 +1,16 @@
 import { makeStyles } from "@material-ui/core";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   container: {
     gap: "10px", 
     display: "flex", 
     flexDirection: "column", 
   },
-  signupForm: {
+  loginForm: {
     display: "flex",
     flexDirection: "column",
     gap: "10px",
-  },
-  password: {
-    display: "flex",
-  },
+  }
 }));
 
 export default useStyles;

@@ -3,6 +3,8 @@ import { Typography, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import useStyles from "./styles";
 import { VARIANTS } from "../../constants";
+import PropTypes from 'prop-types'
+
 
 const Links = (props) =>  {
   const classes = useStyles();
@@ -27,3 +29,11 @@ const Links = (props) =>  {
 }
 
 export default Links;
+
+Links.propTypes = {
+  buttonText: PropTypes.string,
+  pageText: PropTypes.string, 
+  pageLink: PropTypes.string, 
+  disabled: PropTypes.func, 
+  onClick: PropTypes.func, 
+}

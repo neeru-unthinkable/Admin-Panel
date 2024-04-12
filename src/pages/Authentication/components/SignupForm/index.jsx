@@ -5,13 +5,15 @@ import {
   IconButton,
   InputAdornment,
   Tooltip,
+  Box, 
+  Typography
 } from "@material-ui/core";
 
 import InfoIcon from "@material-ui/icons/Info";
 import useStyles from "./styles";
-import { CONSTANTS, CTA_LABELS, ERRORS, INPUT_LABELS, INPUT_NAMES, VARIANTS } from "../../../../constants";
+import { CONSTANTS, CTA_LABELS, INPUT_LABELS, INPUT_NAMES, VARIANTS } from "../../../../constants";
 import Links from "../../../../components/Links/Links";
-import { isName, isUsername, notContainSpace, validateEmail, validateName, validatePassword, validateUsername } from "../../../../helpers/RegexHelpers";
+import { handleBlur, handleFormChange } from "../../../../helpers/inputUtils";
 
 const SignupForm = () =>  {
   const classes = useStyles();
@@ -34,66 +36,6 @@ const SignupForm = () =>  {
     confirmPassword: "",
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormErrors((prev) => ({ ...prev, [name]: "" }));
-    const cloneFormData = { ...formData };
-    if (name === INPUT_NAMES.USERNAME && isUsername(value)) {
-      cloneFormData[name] = value;
-    } else if (name === INPUT_NAMES.NAME && isName(value)) {
-      cloneFormData[name] = value;
-    } else if (
-      name === INPUT_NAMES.EMAIL &&
-      notContainSpace(value) &&
-      value.length <= 50
-    ) {
-      cloneFormData[name] = value;
-    } else if (
-      name === INPUT_NAMES.PASSWORD &&
-      value.length <= 20 &&
-      notContainSpace(value)
-    ) {
-      cloneFormData[name] = value;
-    } else if (
-      name === INPUT_NAMES.CONFIRM_PASSWORD &&
-      value.length <= 20 &&
-      notContainSpace(value)
-    ) {
-      cloneFormData[name] = value;
-    }
-    if (!value.length) {
-      cloneFormData[name] = value;
-    }
-    setFormData(cloneFormData);
-  };
-
-  const handleBlur = (e) => {
-    const { name } = e.target;
-    let { value } = e.target;
-    value = value.trim();
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    let error = "";
-    if (name === INPUT_NAMES.USERNAME && !validateUsername(value)) {
-      error = ERRORS.USERNAME_ERROR;
-    } else if (name === INPUT_NAMES.NAME && !validateName(value)) {
-      error = ERRORS.NAME_ERROR;
-    } else if (name === INPUT_NAMES.EMAIL && !validateEmail(value)) {
-      error = ERRORS.EMAIL_ERROR;
-    } else if (name === INPUT_NAMES.PASSWORD && !validatePassword(value)) {
-      error = ERRORS.PASSWORD_ERROR;
-    } else if (name === INPUT_NAMES.CONFIRM_PASSWORD) {
-      if (validatePassword(value)) {
-        if (formData.password !== value) {
-          error = ERRORS.PASSWORD_MISMATCH;
-        }
-      } else {
-        error = ERRORS.PASSWORD_ERROR;
-      }
-    }
-    if (error) {
-      setFormErrors((prev) => ({ ...prev, [name]: error }));
-    }
-  };
 
   const isSignupEnabled = useMemo(() => {
     if (
@@ -109,7 +51,10 @@ const SignupForm = () =>  {
   }, [formData, formErrors]);
 
   return (
-    <div className={classes.signupForm}>
+    <Box className={classes.container}>
+      <Typography variant="h3">{CONSTANTS.SIGNUP} </Typography>
+      <Typography variant="subtitle1">{CONSTANTS.TO_CONTINUE}</Typography>
+    <Box className={classes.signupForm}>
       <TextField
         variant={VARIANTS.OUTLINED}
         id="outlined-username"
@@ -118,8 +63,8 @@ const SignupForm = () =>  {
         name={INPUT_NAMES.USERNAME}
         value={formData.username}
         required
-        onChange={handleChange}
-        onBlur={handleBlur}
+        onChange={(e) => handleFormChange(e, formData, setFormData, setFormErrors)}
+        onBlur={(e) => handleBlur(e, formData, setFormData, setFormErrors)}
         error={Boolean(formErrors.username)}
         helperText={formErrors.username}
       />
@@ -131,8 +76,8 @@ const SignupForm = () =>  {
         name={INPUT_NAMES.NAME}
         value={formData.name}
         required
-        onChange={handleChange}
-        onBlur={handleBlur}
+        onChange={(e) => handleFormChange(e, formData, setFormData, setFormErrors)}
+        onBlur={(e) => handleBlur(e, formData, setFormData, setFormErrors)}
         error={Boolean(formErrors.name)}
         helperText={formErrors.name}
       />
@@ -145,8 +90,8 @@ const SignupForm = () =>  {
         name={INPUT_NAMES.EMAIL}
         value={formData.email}
         required
-        onChange={handleChange}
-        onBlur={handleBlur}
+        onChange={(e) => handleFormChange(e, formData, setFormData, setFormErrors)}
+        onBlur={(e) => handleBlur(e, formData, setFormData, setFormErrors)}
         error={Boolean(formErrors.email)}
         helperText={formErrors.email}
       />
@@ -160,8 +105,8 @@ const SignupForm = () =>  {
           fullWidth
           name={INPUT_NAMES.PASSWORD}
           value={formData.password}
-          onChange={handleChange}
-          onBlur={handleBlur}
+          onChange={(e) => handleFormChange(e, formData, setFormData, setFormErrors)}
+          onBlur={(e) => handleBlur(e, formData, setFormData, setFormErrors)}
           error={Boolean(formErrors.password)}
           helperText={formErrors.password}
           InputProps={{
@@ -186,8 +131,8 @@ const SignupForm = () =>  {
         fullWidth
         name={INPUT_NAMES.CONFIRM_PASSWORD}
         value={formData.confirmPassword}
-        onChange={handleChange}
-        onBlur={handleBlur}
+        onChange={(e) => handleFormChange(e, formData, setFormData, setFormErrors)}
+        onBlur={(e) => handleBlur(e, formData, setFormData, setFormErrors)}
         error={Boolean(formErrors.confirmPassword)}
         helperText={formErrors.confirmPassword}
         InputProps={{
@@ -209,25 +154,11 @@ const SignupForm = () =>  {
         pageText={CONSTANTS.SIGNIN_TEXT}
         pageLink={CTA_LABELS.SIGNIN}
         disabled={!isSignupEnabled}
-        // onClick={handleSignup}
         to="/login"
       />
-    </div>
+    </Box>
+    </Box>
   );
 }
 
 export default SignupForm;
-
-// const handleSignup = async () => {
-//   setLoader(true);
-//   try {
-//     setLoader(false);
-//     const response = await axios.post(
-//       "http://localhost:5001/register",
-//       formData
-//     );
-//     console.log("Data sent", response);
-//   } catch(err) {
-//     console.log("Error:", err );
-//   }
-// };

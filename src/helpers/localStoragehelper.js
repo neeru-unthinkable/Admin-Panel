@@ -8,8 +8,11 @@ const setItemToLocalStorage = (key, value) => {
   }
 };
 
-const getItemFromLocalStorage = (key) => {
+const getItemFromLocalStorage = (key, isObject = false) => {
   if (key) {
+    if (isObject) {
+      return JSON.parse(localStorage.getItem(key));
+    }
     return localStorage.getItem(key);
   }
 };

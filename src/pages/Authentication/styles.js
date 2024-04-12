@@ -33,10 +33,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "flex-start",
     gap: "10px",
   },
-  footer: {
-    position: "absolute",
-    bottom: "0",
-    color: theme.palette.primary.footer,
-  },
+
 }));
 export default useStyles;

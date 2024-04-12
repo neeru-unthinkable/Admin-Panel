@@ -6,7 +6,6 @@ const Logo = ({ className }) => {
       className={className}
       src="assets/PinelabsLogo.png"
       alt="logo"
-      style={{ height: "40px" }}
     />
   );
 };

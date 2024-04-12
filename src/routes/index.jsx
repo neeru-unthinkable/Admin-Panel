@@ -1,21 +1,28 @@
-import React, { lazy, Suspense, useEffect } from "react";
-import {
-  Route,
-  BrowserRouter as Router,
-  Switch,
-  Redirect,
-} from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import "react-toastify/dist/ReactToastify.css";
+import { useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { useIdleTimer } from "react-idle-timer";
+import React, { lazy, Suspense, useEffect } from "react";
+import { Route, Switch, Redirect } from "react-router-dom";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
+import {
+  getItemFromLocalStorage,
+  setItemToLocalStorage,
+} from "../helpers/localStoragehelper";
+import Profile from "../pages/Profile";
 import ROUTES from "../constants/routes";
 import ErrorPage from "../pages/ErrorPage";
+import { AUTH_CONFIG } from "../constants";
 import ProtectedRoute from "./ProtectedRoute";
 import APILoader from "../components/APILoader";
+import useAdminCRUD from "../hooks/useAdminCRUD";
+import { isAuthenticated } from "../helpers/utils";
+import Logout from "../pages/Authentication/Logout";
 import NetworkDetector from "../hoc/NetworkDetector";
 import useAdminContext from "../hooks/useAdminContext";
-import Logout from "../pages/Authentication/Logout";
-import Profile from "../pages/Profile";
+import ConditionalRender from "../components/ConditionalRender";
 
 const Dashboard = lazy(() => import("../pages/Dashboard"));
 const Login = lazy(() => import("../pages/Authentication/Login"));
@@ -23,34 +30,90 @@ const Signup = lazy(() => import("../pages/Authentication/Signup"));
 const Error404 = lazy(() => import("../components/Errors/Error404"));
 
 const Routes = () => {
-  const { loading,data,
-    updateData, } = useAdminContext();
+  const history = useHistory();
+  const location = useLocation();
+  const { loading, data, updateData } = useAdminContext();
 
-  const onUnLoad = () => {
-    sessionStorage.setItem("data", JSON.stringify(data));
-  };
+  const [refreshToken, response] = useAdminCRUD({
+    url: "http://localhost:5001/refreshToken",
+    method: "create",
+  });
 
   useEffect(() => {
-    const storedData = sessionStorage.getItem("data");
+    if (AUTH_CONFIG.NON_AUTHENTICATED_ROUTES.includes(location.pathname))
+      return;
+    const storedData = sessionStorage.getItem(AUTH_CONFIG.ADMIN_STORAGE);
     if (storedData) {
       updateData(JSON.parse(storedData));
     }
-    sessionStorage.removeItem("data");
+    sessionStorage.removeItem(AUTH_CONFIG.ADMIN_STORAGE);
   }, []);
 
-  useEffect(() => {
-    window.addEventListener("unload", onUnLoad);
+  const handleUnload = () => {
+    if (AUTH_CONFIG.NON_AUTHENTICATED_ROUTES.includes(location.pathname))
+      return;
+    sessionStorage.setItem(AUTH_CONFIG.ADMIN_STORAGE, JSON.stringify(data));
+  };
 
+  window.addEventListener("unload", handleUnload);
+  useEffect(() => {
     return () => {
-      window.removeEventListener("unload", onUnLoad);
+      window.removeEventListener("unload", handleUnload);
     };
+  }, []);
+
+  const handleOnIdle = () => {
+    if (AUTH_CONFIG.NON_AUTHENTICATED_ROUTES.includes(location.pathname))
+      return;
+    history.replace(ROUTES.LOGOUT);
+  };
+
+  const handleOnAction = () => {
+    if (isAuthenticated()) {
+      let storedUserData = getItemFromLocalStorage(
+        AUTH_CONFIG.AUTH_SESSION_INFO,
+        true
+      );
+      let { token } = storedUserData;
+      if (token) {
+        const decoded = jwtDecode(token);
+        const { exp } = decoded;
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (exp <= currentTime) {
+          history.replace(ROUTES.LOGOUT);
+        } else if (exp - currentTime <= 180) {
+          console.log("Token about to be expired");
+
+          refreshToken({
+            data: getItemFromLocalStorage(AUTH_CONFIG.AUTH_SESSION_INFO, true),
+          });
+
+          if (response) {
+            console.log("🚀 ~ handleOnAction ~ response:", response);
+            const { token } = response;
+            storedUserData.token = token;
+            setItemToLocalStorage(
+              AUTH_CONFIG.AUTH_SESSION_INFO,
+              storedUserData
+            );
+            updateData(storedUserData);
+          }
+        }
+      }
+    }
+  };
+
+  useIdleTimer({
+    onIdle: handleOnIdle,
+    onAction: handleOnAction,
+    timeout: 60 * 1000,
+    throttle: 2 * 1000,
   });
 
-
   return (
-    <Router>
+    <React.Fragment>
       <ToastContainer hideProgressBar />
-      {loading ? <APILoader /> : null}
+      <ConditionalRender condition={loading} truthyComponent={<APILoader />} />
       <Suspense fallback={<APILoader />}>
         <Switch>
           <Redirect exact from={ROUTES.HOME} to={ROUTES.LOGIN} />
@@ -58,12 +121,12 @@ const Routes = () => {
           <Route exact path={ROUTES.SIGNUP} component={Signup} />
           <Route exact path={ROUTES.ERROR} component={ErrorPage} />
           <Route exact path={ROUTES.LOGOUT} component={Logout} />
-          <Route exact path = {ROUTES.PROFILE} component = {Profile}/>
+          <Route exact path={ROUTES.PROFILE} component={Profile} />
           <ProtectedRoute exact path={ROUTES.DASHBOARD} component={Dashboard} />
           <Route component={Error404} />
         </Switch>
       </Suspense>
-    </Router>
+    </React.Fragment>
   );
 };
 

@@ -1,14 +1,29 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
 
-import { getItemFromLocalStorage } from "../helpers/localStoragehelper";
-import { AUTH_CONFIG } from "../constants";
+import useAdminCRUD from "../hooks/useAdminCRUD";
+import useAdminContext from "../hooks/useAdminContext";
+import { isAuthenticated } from "../helpers/utils";
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
-  const isAuthenticated = () => {
-    const user = JSON.parse(getItemFromLocalStorage(AUTH_CONFIG.AUTH_SESSION_INFO));
-    return user && user.token;
-  };
+  const {updateData } = useAdminContext();
+
+  const [getPermission, response] = useAdminCRUD({
+    url: "http://localhost:5001/getpermissions",
+    method: "create",
+    shoudldSetLoading: true, 
+  });
+
+  useEffect(() => {
+    getPermission({});
+  }, []);
+
+  useEffect(() => {
+    if (response) {
+      const { permissions } = response;
+      if (permissions) updateData({ permissions: permissions });
+    }
+  }, []);
 
   return (
     <Route

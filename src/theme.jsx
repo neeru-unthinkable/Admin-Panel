@@ -16,6 +16,7 @@ const theme = createTheme({
       main: color.primary,
       white: color.white,
       grey: color.grey,
+      lightGrey: color.lightGrey,
       darkGrey: color.darkGrey,
       warningBg: color.warningBg,
     },

@@ -4,7 +4,8 @@ const useStyles = makeStyles({
    logo:{
     position: 'absolute',
     top: '15px',
-    left: '30px'
+    left: '30px', 
+    height: "30px"
    },
    text: {
       marginBottom:"25px",
