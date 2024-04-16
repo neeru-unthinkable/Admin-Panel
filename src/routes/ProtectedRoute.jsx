@@ -1,17 +1,19 @@
 import React, { useEffect } from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Route } from "react-router-dom";
 
 import useAdminCRUD from "../hooks/useAdminCRUD";
 import useAdminContext from "../hooks/useAdminContext";
 import { isAuthenticated } from "../helpers/utils";
+import APILoader from "../components/APILoader";
+import API_URLS from "../api/urls";
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
   const {updateData } = useAdminContext();
 
-  const [getPermission, response] = useAdminCRUD({
-    url: "http://localhost:5001/getpermissions",
+  const [getPermission, response, loading] = useAdminCRUD({
+    url: API_URLS.getPermissions,
     method: "create",
-    shoudldSetLoading: true, 
+    shouldSetLoading: true, 
   });
 
   useEffect(() => {
@@ -25,19 +27,13 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
     }
   }, []);
 
+  if (loading) return <APILoader />;
   return (
     <Route
       {...rest}
       render={(props) =>
-        isAuthenticated() ? (
+        isAuthenticated() && (
           <Component {...props} />
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/login",
-              state: { from: props.location.pathname },
-            }}
-          />
         )
       }
     />

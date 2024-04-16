@@ -1,5 +1,5 @@
-import { Visibility, VisibilityOff } from "@material-ui/icons";
 import React, { useState, useMemo, useEffect } from "react";
+import { Visibility, VisibilityOff } from "@material-ui/icons";
 import { Box, TextField, IconButton, InputAdornment, Typography } from "@material-ui/core";
 import {
   VARIANTS,
@@ -16,9 +16,12 @@ import ROUTES from "../../../../constants/routes";
 import Links from "../../../../components/Links/Links";
 import { displayToast } from "../../../../helpers/utils";
 import useAdminCRUD from "../../../../hooks/useAdminCRUD";
-import useAdminContext from "../../../../hooks/useAdminContext";
-import { setItemToLocalStorage } from "../../../../helpers/localStoragehelper";
+import Warning from "../../../../components/Warning/index"
 import { handleChange } from "../../../../helpers/inputUtils";
+import useAdminContext from "../../../../hooks/useAdminContext";
+import ConditionalRender from "../../../../components/ConditionalRender";
+import { setItemToLocalStorage } from "../../../../helpers/localStoragehelper";
+import API_URLS from "../../../../api/urls";
 
 function LoginForm({ redirectedFrom }) {
   const history = useHistory();
@@ -28,15 +31,14 @@ function LoginForm({ redirectedFrom }) {
   const classes = useStyles();
 
   const [signIn, response, loading] = useAdminCRUD({
-    url: "http://localhost:5001/signIn",
+    url: API_URLS.signIn,
     method: "create",
-    shoudldSetLoading: true, 
   });
 
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-  });
+  }); 
 
   const allowedToSignIn = useMemo(
     () => Boolean(formData.username && formData.password),
@@ -68,6 +70,7 @@ function LoginForm({ redirectedFrom }) {
     <Box className={classes.container}>
       <Typography variant="h3">{CONSTANTS.SIGNIN} </Typography>
       <Typography variant="subtitle1">{CONSTANTS.TO_CONTINUE}</Typography>
+      <ConditionalRender condition={Boolean(redirectedFrom)} truthyComponent={<Warning/>}/>
       <Box className={classes.loginForm}>
         <TextField
           fullWidth

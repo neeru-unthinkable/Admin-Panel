@@ -13,7 +13,6 @@ import {
 } from "../helpers/localStoragehelper";
 import Profile from "../pages/Profile";
 import ROUTES from "../constants/routes";
-import ErrorPage from "../pages/ErrorPage";
 import { AUTH_CONFIG } from "../constants";
 import ProtectedRoute from "./ProtectedRoute";
 import APILoader from "../components/APILoader";
@@ -23,6 +22,7 @@ import Logout from "../pages/Authentication/Logout";
 import NetworkDetector from "../hoc/NetworkDetector";
 import useAdminContext from "../hooks/useAdminContext";
 import ConditionalRender from "../components/ConditionalRender";
+import API_URLS from "../api/urls";
 
 const Dashboard = lazy(() => import("../pages/Dashboard"));
 const Login = lazy(() => import("../pages/Authentication/Login"));
@@ -35,8 +35,9 @@ const Routes = () => {
   const { loading, data, updateData } = useAdminContext();
 
   const [refreshToken, response] = useAdminCRUD({
-    url: "http://localhost:5001/refreshToken",
+    url: API_URLS.refreshToken,
     method: "create",
+    shouldSetLoading: false,
   });
 
   useEffect(() => {
@@ -70,43 +71,46 @@ const Routes = () => {
 
   const handleOnAction = () => {
     if (isAuthenticated()) {
-      let storedUserData = getItemFromLocalStorage(
+      const storedUserData = getItemFromLocalStorage(
         AUTH_CONFIG.AUTH_SESSION_INFO,
         true
       );
-      let { token } = storedUserData;
-      if (token) {
-        const decoded = jwtDecode(token);
-        const { exp } = decoded;
-        const currentTime = Math.floor(Date.now() / 1000);
-        if (exp <= currentTime) {
-          history.replace(ROUTES.LOGOUT);
-        } else if (exp - currentTime <= 180) {
-          console.log("Token about to be expired");
-
-          refreshToken({
-            data: getItemFromLocalStorage(AUTH_CONFIG.AUTH_SESSION_INFO, true),
-          });
-
-          if (response) {
-            console.log("🚀 ~ handleOnAction ~ response:", response);
-            const { token } = response;
-            storedUserData.token = token;
-            setItemToLocalStorage(
-              AUTH_CONFIG.AUTH_SESSION_INFO,
-              storedUserData
-            );
-            updateData(storedUserData);
+      if (storedUserData) {
+        const { token, refreshToken: rt } = storedUserData;
+        if (token) {
+          const decoded = jwtDecode(token);
+          const { exp } = decoded;
+          const currentTime = Math.floor(Date.now() / 1000);
+          if (exp <= currentTime) {
+            history.replace(ROUTES.LOGOUT);
+          } else if (exp - currentTime <= 180) {
+            refreshToken({ data: { refreshToken: rt } });
           }
         }
       }
     }
   };
 
+  useEffect(() => {
+    if (response) {
+      const { token } = response;
+      const storedUserData = getItemFromLocalStorage(
+        AUTH_CONFIG.AUTH_SESSION_INFO,
+        true
+      );
+      storedUserData.token = token;
+      setItemToLocalStorage(
+        AUTH_CONFIG.AUTH_SESSION_INFO,
+        storedUserData
+      );
+      updateData(storedUserData);
+    }
+  }, [response]);
+
   useIdleTimer({
     onIdle: handleOnIdle,
     onAction: handleOnAction,
-    timeout: 60 * 1000,
+    timeout: 5 * 1000,
     throttle: 2 * 1000,
   });
 
@@ -119,7 +123,6 @@ const Routes = () => {
           <Redirect exact from={ROUTES.HOME} to={ROUTES.LOGIN} />
           <Route exact path={ROUTES.LOGIN} component={Login} />
           <Route exact path={ROUTES.SIGNUP} component={Signup} />
-          <Route exact path={ROUTES.ERROR} component={ErrorPage} />
           <Route exact path={ROUTES.LOGOUT} component={Logout} />
           <Route exact path={ROUTES.PROFILE} component={Profile} />
           <ProtectedRoute exact path={ROUTES.DASHBOARD} component={Dashboard} />

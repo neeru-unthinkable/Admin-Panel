@@ -8,9 +8,11 @@ const displayToast = (message, type = "success", timeout = 2000) =>
     theme: "colored",
   });
 
+const toBool = (value) => value === 'true';
+
 const isAuthenticated = () => {
   const user = getItemFromLocalStorage(AUTH_CONFIG.AUTH_SESSION_INFO, true);
   return user && user.token;
 };
 
-export { displayToast, isAuthenticated };
+export { displayToast, isAuthenticated, toBool };

@@ -1,15 +1,17 @@
-// import axios from "axios";
-import useAdminContext from "./useAdminContext";
-import { useCallback, useState } from "react";
 import { get, post } from "../api";
-import {
-  getItemFromLocalStorage,
-} from "../helpers/localStoragehelper";
-import { AUTH_CONFIG } from "../constants";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import ROUTES from "../constants/routes";
-
-const useAdminCRUD = ({ url, method, multipart, timeout, shoudldSetLoading = false }) => {
+import { AUTH_CONFIG } from "../constants";
+import { useCallback, useState } from "react";
+import useAdminContext from "./useAdminContext";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { getItemFromLocalStorage } from "../helpers/localStoragehelper";
+const useAdminCRUD = ({
+  url,
+  method,
+  multipart,
+  timeout,
+  shouldSetLoading = true,
+}) => {
   const getToken = () =>
     JSON.parse(getItemFromLocalStorage(AUTH_CONFIG.AUTH_SESSION_INFO))?.token;
   const { loading, setLoading } = useAdminContext();
@@ -24,7 +26,10 @@ const useAdminCRUD = ({ url, method, multipart, timeout, shoudldSetLoading = fal
   const handleError = (e) => {
     if (e) {
       if (e?.response?.status === 401) {
-        history.replace(ROUTES.LOGOUT);
+        history.replace({
+          pathname: ROUTES.LOGOUT,
+          state: { from: history.location.pathname },
+        });
       } else if (e.errors) {
         const errObj = {};
         e.errors.forEach((obj) => {
@@ -40,8 +45,7 @@ const useAdminCRUD = ({ url, method, multipart, timeout, shoudldSetLoading = fal
 
   op.create = useCallback(
     async ({ data, headers, formData, token, params }) => {
-        
-      if(shoudldSetLoading)setLoading(true);
+      if (shouldSetLoading) setLoading(true);
       const res = await post({
         url,
         multipart,
@@ -50,18 +54,18 @@ const useAdminCRUD = ({ url, method, multipart, timeout, shoudldSetLoading = fal
         data,
         headers,
         formData,
-        params
+        params,
       }).catch((e) => {
         setResponse(e?.response?.data);
         handleError(e);
       });
-      if(shoudldSetLoading)setLoading(false);
+      setLoading(false);
       if (res) {
         setResponse(res);
         handleError(res);
       }
     },
-    [multipart, timeout, url]
+    [multipart, timeout, url, shouldSetLoading]
   );
 
   op.read = useCallback(
@@ -78,7 +82,7 @@ const useAdminCRUD = ({ url, method, multipart, timeout, shoudldSetLoading = fal
         setError(e?.response);
       });
       setLoading(false);
-      if(res) setResponse(res);
+      if (res) setResponse(res);
     },
     [timeout, url]
   );
