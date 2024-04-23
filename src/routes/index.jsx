@@ -110,7 +110,7 @@ const Routes = () => {
   useIdleTimer({
     onIdle: handleOnIdle,
     onAction: handleOnAction,
-    timeout: 5 * 1000,
+    timeout: 100 * 1000,
     throttle: 2 * 1000,
   });
 

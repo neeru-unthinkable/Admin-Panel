@@ -31,7 +31,10 @@ const ERRORS = {
     PASSWORD_ERROR: 'Please Enter valid password', 
     CONFIRM_PASSWORD_ERROR:'Please Enter valid  password', 
     PASSWORD_MISMATCH: 'Paaswords do not match',
-    SOMETHING_WENT_WRONG: 'Something went wrong.'
+    SOMETHING_WENT_WRONG: 'Something went wrong.',
+    SURNAME_ERROR: 'Please enter a valid surname.',
+    BIRTHYEAR_ERROR: 'Please enter a valid birthyear'
+
 }
 
 const INPUT_NAMES = {
@@ -40,6 +43,8 @@ const INPUT_NAMES = {
     PASSWORD: 'password',
     NAME: 'name',
     CONFIRM_PASSWORD: 'confirmPassword',
+    SURNAME: 'surname', 
+    BIRTHYEAR: 'birthYear'
 };
 
 const CTA_LABELS = {
@@ -59,7 +64,9 @@ const INPUT_LABELS = {
     USERNAME: 'Username', 
     EMAIL: 'Email' ,
     PASSWORD: 'Password', 
-    CONFIRM_PASSWORD: 'Confirm Password', 
+    CONFIRM_PASSWORD: 'Confirm Password',
+    SURNAME: 'Surname', 
+    BIRTHYEAR: 'Birthyear' 
 };
 
 const VARIANTS = {
@@ -75,6 +82,11 @@ const AUTH_CONFIG = {
 
 }
 
+const TOOLTIP = {
+    ADD_USER: 'Add user', 
+    DELETE_USER: 'Delete User'
+}
+
 export {
     CONSTANTS,
     INPUT_NAMES,
@@ -83,5 +95,6 @@ export {
     VARIANTS,
     INPUT_LABELS, 
     ERRORS,
-    AUTH_CONFIG
+    AUTH_CONFIG, 
+    TOOLTIP
 };

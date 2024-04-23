@@ -1,0 +1,183 @@
+import React, { useMemo, useState } from "react";
+import MaterialTable from "material-table";
+import tableIcons from "./MaterialIcons";
+import { columns, data as initialData } from "./TableData";
+import useStyles from "./styles";
+import { Button, Modal, TextField } from "@material-ui/core";
+import { isBirthYear, validateName } from "../../helpers/RegexHelpers";
+import {
+  ERRORS,
+  INPUT_LABELS,
+  INPUT_NAMES,
+  TOOLTIP,
+  VARIANTS,
+} from "../../constants";
+
+const MuiTable = () => {
+  const classes = useStyles();
+  const [data, setData] = useState(initialData);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const [formData, setFormData] = useState({
+    id: Math.floor(Math.random() * 1000),
+    name: "",
+    surname: "",
+    birthYear: "",
+  });
+
+  const [formErrors, setFormErrors] = useState({
+    name: "",
+    surname: "",
+    birthYear: "",
+  });
+
+  const handleDeleteUser = (event, rowData) => {
+    const confirmationText = "Are you sure?";
+    if (window.confirm(confirmationText)) {
+      const updatedData = data.filter((item) => item.id !== rowData.id);
+      setData(updatedData);
+    }
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    setData([...data, formData]);
+    setFormData({
+      id: Math.floor(Math.random() * 1000),
+      name: "",
+      surname: "",
+      birthYear: "",
+    });
+    setIsFormOpen(false);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    let { value } = e.target;
+
+    value = value.trim();
+    setFormData({ ...formData, [name]: value });
+
+    let error = "";
+    if (name === INPUT_NAMES.NAME && !validateName(value)) {
+      error = ERRORS.NAME_ERROR;
+    } else if (name === INPUT_NAMES.SURNAME && !validateName(value)) {
+      error = ERRORS.SURNAME_ERROR;
+    } else if (name === INPUT_NAMES.BIRTHYEAR && !isBirthYear(value)) {
+      error = ERRORS.BIRTHYEAR_ERROR;
+    }
+
+    setFormErrors((prev) => ({ ...prev, [name]: error }));
+  };
+
+  const isSubmitEnabled = useMemo(() => {
+    if (
+      Object.values(formData).every((value) => value) &&
+      Object.values(formErrors).every((value) => !value)
+    ) {
+      return true;
+    }
+    return false;
+  }, [formData, formErrors]);
+
+  return (
+    <>
+      <MaterialTable
+        className={classes.table}
+        title="Table"
+        actions={[
+          {
+            icon: tableIcons.Delete,
+            tooltip: TOOLTIP.DELETE_USER,
+            onClick: handleDeleteUser,
+          },
+          {
+            icon: tableIcons.Add,
+            tooltip: TOOLTIP.ADD_USER,
+            isFreeAction: true,
+            onClick: () => setIsFormOpen(true),
+          },
+        ]}
+        icons={tableIcons}
+        columns={columns}
+        onRowClick={(e, selectedRow) =>
+          setSelectedRow(selectedRow.tableData.id)
+        }
+        data={data}
+        options={{
+          exportButton: true,
+          sorting: true,
+          rowStyle: (rowData) => ({
+            backgroundColor:
+              selectedRow === rowData.tableData.id ? "#EEE" : "#FFF",
+          }),
+          headerStyle: {
+            backgroundColor: '#01579b',
+            color: '#FFF'
+          },
+          // selection: true,
+        }}
+      />
+      <Modal open={isFormOpen} onClose={() => setIsFormOpen(false)}>
+        <div className={classes.formPopup}>
+          <form onSubmit={handleFormSubmit} className={classes.userForm}>
+            <h2>Add User</h2>
+            <TextField
+              type="text"
+              name={INPUT_NAMES.NAME}
+              placeholder={INPUT_LABELS.NAME}
+              value={formData.name}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              error={Boolean(formErrors.name)}
+            />
+
+            <TextField
+              type="text"
+              name={INPUT_NAMES.SURNAME}
+              placeholder={INPUT_LABELS.SURNAME}
+              value={formData.surname}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              error={Boolean(formErrors.surname)}
+            />
+
+            <TextField
+              type="text"
+              name={INPUT_NAMES.BIRTHYEAR}
+              placeholder={INPUT_LABELS.BIRTHYEAR}
+              value={formData.birthYear}
+              onChange={handleInputChange}
+              onBlur={handleBlur}
+              error={Boolean(formErrors.birthYear)}
+            />
+
+            <Button
+              type="submit"
+              variant={VARIANTS.CONTAINED}
+              color="primary"
+              disabled={!isSubmitEnabled}
+            >
+              Submit
+            </Button>
+            <Button
+              onClick={() => setIsFormOpen(false)}
+              variant={VARIANTS.CONTAINED}
+              color="secondary"
+            >
+              Cancel
+            </Button>
+          </form>
+        </div>
+      </Modal>
+    </>
+  );
+};
+
+export default MuiTable;

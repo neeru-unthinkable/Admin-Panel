@@ -12,4 +12,6 @@ const isName = (name) => /^[a-zA-Z ]{0,20}$/.test(name);
 
 const notContainSpace = (value) =>  /^\S+$/i.test(value)
 
-export {validateEmail, validateName, validatePassword, validateUsername, isUsername, isName, notContainSpace};
+const isBirthYear = (value) => /^(19|20)\d{2}$/.test(value)
+
+export {validateEmail, validateName, validatePassword, validateUsername, isUsername, isName, notContainSpace, isBirthYear};
