@@ -13,11 +13,25 @@ const Dashboard = () => {
   const {
     data: { name, email, username },
   } = useAdminContext();
-  
+
   const style = {
-    backgroundColor : "whiteSmoke"
-  }
+    backgroundColor: "whiteSmoke",
+  };
+
   
+
+  const options = {
+    exportButton: true,
+    sorting: true,
+    selection: true,
+    rowStyle : {
+      backgroundColor: "#B6D0E2",
+    }, 
+    headerStyle : {
+      backgroundColor: "#01579b",
+      color: "#FFF",
+    }
+  };
 
   return (
     <div>
@@ -33,8 +47,8 @@ const Dashboard = () => {
         columns={columns}
         data={tableData}
         setTableData={setTableData}
-        style = {style}
-        
+        style={style}
+        options = {options}
       />
     </div>
   );

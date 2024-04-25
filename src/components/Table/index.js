@@ -4,7 +4,7 @@ import tableIcons from "./MaterialIcons";
 import { TOOLTIP } from "../../constants";
 import MaterialTable from "material-table";
 
-const MuiTable = ({ title, data, columns, setTableData, style }) => {
+const MuiTable = ({ title, data, columns, setTableData, style, options }) => {
   const classes = useStyles();
   const [selectedRows, setSelectedRows] = useState([]);
 
@@ -54,20 +54,7 @@ const MuiTable = ({ title, data, columns, setTableData, style }) => {
         columns={columns}
         onRowClick={handleRowClick}
         data={data}
-        options={{
-          exportButton: true,
-          sorting: true,
-          rowStyle: (rowData) => ({
-            backgroundColor: selectedRows.includes(rowData.tableData.id)
-              ? "#EEE"
-              : "#FFF",
-          }),
-          headerStyle: {
-            backgroundColor: "#01579b",
-            color: "#FFF",
-          },
-          selection: true,
-        }}
+        options={options}
         style={style}
       />
     </>
