@@ -10,7 +10,6 @@ import LoginForm from "../components/LoginForm";
 
 function Login(props) {
   const history = useHistory();
-
   useEffect(() => {
     if (authCheck()) history.replace(ROUTES.DASHBOARD);
   }, []);

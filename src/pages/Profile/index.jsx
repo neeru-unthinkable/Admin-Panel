@@ -1,24 +1,26 @@
 import React from 'react'
-import useAdminContext from '../../hooks/useAdminContext'
+// import useAdminContext from '../../hooks/useAdminContext'
 import { Typography } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 
 const Profile = () => {
 
-  const {data: {name, email, username}} = useAdminContext(); 
+  const userData = useSelector(state => state.loginData)
+  // const {data: {name, email, username}} = useAdminContext(); 
 
   return (
     <>
     <Typography>
-      Name: {name}
+      Name: {userData.name}
     </Typography>
     <Typography>
-      Email: {email}
+      Email: {userData.email}
     </Typography>
     <Typography>
-      Username: {username}
+      Username: {userData.username}
     </Typography>
     </>
   )
 }
 
-export default Profile
+export default Profile;

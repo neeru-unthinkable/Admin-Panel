@@ -14,7 +14,6 @@ const useStyles = makeStyles((theme) => ({
         [theme.breakpoints.down("sm")]: {
             width: "100%"
           },
-
       },
       footer: {
         color: theme.palette.primary.grey,
@@ -28,4 +27,4 @@ const useStyles = makeStyles((theme) => ({
       }
 })); 
 
-export  default useStyles
+export  default useStyles; 

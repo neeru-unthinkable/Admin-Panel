@@ -2,9 +2,10 @@ import { get, post } from "../api";
 import ROUTES from "../constants/routes";
 import { AUTH_CONFIG } from "../constants";
 import { useCallback, useState } from "react";
-import useAdminContext from "./useAdminContext";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { getItemFromLocalStorage } from "../helpers/localStoragehelper";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading } from "../redux/actions";
 const useAdminCRUD = ({
   url,
   method,
@@ -14,10 +15,12 @@ const useAdminCRUD = ({
 }) => {
   const getToken = () =>
     JSON.parse(getItemFromLocalStorage(AUTH_CONFIG.AUTH_SESSION_INFO))?.token;
-  const { loading, setLoading } = useAdminContext();
+  const history = useHistory();
   const [error, setError] = useState(null);
   const [response, setResponse] = useState(null);
-  const history = useHistory();
+
+  const dispatch = useDispatch(); 
+  const loading = useSelector(state => state.loading)
 
   const clearResponse = useCallback(() => {
     setResponse(null);
@@ -45,7 +48,7 @@ const useAdminCRUD = ({
 
   op.create = useCallback(
     async ({ data, headers, formData, token, params }) => {
-      if (shouldSetLoading) setLoading(true);
+      if (shouldSetLoading) dispatch(setLoading(true));
       const res = await post({
         url,
         multipart,
@@ -59,7 +62,7 @@ const useAdminCRUD = ({
         setResponse(e?.response?.data);
         handleError(e);
       });
-      setLoading(false);
+      dispatch(setLoading(false))
       if (res) {
         setResponse(res);
         handleError(res);
@@ -70,7 +73,7 @@ const useAdminCRUD = ({
 
   op.read = useCallback(
     async ({ headers, token }) => {
-      setLoading(true);
+      dispatch(setLoading(true))
       const res = await get({
         url,
         timeout,
@@ -81,7 +84,7 @@ const useAdminCRUD = ({
         setResponse(e?.response?.data);
         setError(e?.response);
       });
-      setLoading(false);
+      dispatch(setLoading(false))
       if (res) setResponse(res);
     },
     [timeout, url]

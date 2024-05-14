@@ -1,56 +1,43 @@
 import React, { useState } from "react";
-import ROUTES from "../../constants/routes";
-import MuiTable from "../../components/Table";
-import { Button, Typography } from "@material-ui/core";
-import useAdminContext from "../../hooks/useAdminContext";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { columns, data as initialData } from "../../components/Table/TableData";
+import { Grid, SwipeableDrawer } from "@material-ui/core";
+import useStyles from "./styles";
+import LeftBar from "./components/LeftBar";
+import Navbar from "./components/Navbar";
+import Footer from "../../components/Footer/Footer";
 
 const Dashboard = () => {
-  const history = useHistory();
-  const [tableData, setTableData] = useState(initialData);
+  const classes = useStyles();
+  const [isLeftBarOpen, setIsLeftBarOpen] = useState(false);
 
-  const {
-    data: { name, email, username },
-  } = useAdminContext();
-
-  const style = {
-    backgroundColor: "whiteSmoke",
+  const toggleLeftBar = () => {
+    setIsLeftBarOpen(!isLeftBarOpen);
   };
 
-  
+  const handleDrawerOpen = () => {
+    setIsLeftBarOpen(true);
+  };
 
-  const options = {
-    exportButton: true,
-    sorting: true,
-    selection: true,
-    rowStyle : {
-      backgroundColor: "#B6D0E2",
-    }, 
-    headerStyle : {
-      backgroundColor: "#01579b",
-      color: "#FFF",
-    }
+  const handleDrawerClose = () => {
+    setIsLeftBarOpen(false);
   };
 
   return (
-    <div>
-      <Typography>Hello, {name}</Typography>
-      <Typography>Email id: {email}</Typography>
-      <Typography>Username : {username}</Typography>
-      <Button onClick={() => history.push(ROUTES.PROFILE)}>
-        Go to profile
-      </Button>
-      <Button onClick={() => history.replace(ROUTES.LOGOUT)}>Logout</Button>
-      <MuiTable
-        title="Table"
-        columns={columns}
-        data={tableData}
-        setTableData={setTableData}
-        style={style}
-        options = {options}
-      />
-    </div>
+    <>
+      <Grid container className={classes.dashboardContainer}>
+        <SwipeableDrawer
+          anchor="left"
+          open={isLeftBarOpen}
+          onClose={handleDrawerClose}
+          onOpen={handleDrawerOpen}
+        >
+          <LeftBar />
+        </SwipeableDrawer>
+        <Grid item lg={11} md={11} xs={12} className={classes.navbar}>
+          <Navbar toggleLeftBar={toggleLeftBar} />
+          <Footer />
+        </Grid>
+      </Grid>
+    </>
   );
 };
 

@@ -1,11 +1,13 @@
 import axios from "axios";
 import useAdminContext from "./useAdminContext";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../redux/actions";
 
 const useApiCall = () => {
-  const { setLoading } = useAdminContext();
+  const dispatch = useDispatch(); 
 
   const fetchData = async (method, url, reqData = null) => {
-    setLoading(true);
+    dispatch(setLoading(true)); 
 
     const config = {
       method, 
@@ -15,10 +17,10 @@ const useApiCall = () => {
 
     try {
       const response = await axios(config);
-      setLoading(false);
+      dispatch(setLoading(false))
       return response.data;
     } catch (error) {
-      setLoading(false);
+      dispatch(setLoading(false))
       throw error;
     }
   };

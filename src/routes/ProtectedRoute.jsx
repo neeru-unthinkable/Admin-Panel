@@ -2,13 +2,14 @@ import React, { useEffect } from "react";
 import { Route } from "react-router-dom";
 
 import useAdminCRUD from "../hooks/useAdminCRUD";
-import useAdminContext from "../hooks/useAdminContext";
 import { isAuthenticated } from "../helpers/utils";
 import APILoader from "../components/APILoader";
 import API_URLS from "../api/urls";
+import { useDispatch } from "react-redux";
+import { setLoginData } from "../redux/actions";
 
 const ProtectedRoute = ({ component: Component, ...rest }) => {
-  const {updateData } = useAdminContext();
+  const dispatch = useDispatch(); 
 
   const [getPermission, response, loading] = useAdminCRUD({
     url: API_URLS.getPermissions,
@@ -23,7 +24,7 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
   useEffect(() => {
     if (response) {
       const { permissions } = response;
-      if (permissions) updateData({ permissions: permissions });
+      if(permissions) dispatch(setLoginData({permissions: permissions}))
     }
   }, []);
 

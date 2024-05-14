@@ -10,7 +10,9 @@ import {
   AUTH_CONFIG,
   ERRORS,
 } from "../../../../constants";
+
 import useStyles from "./styles";
+import API_URLS from "../../../../api/urls";
 import { useHistory } from "react-router-dom";
 import ROUTES from "../../../../constants/routes";
 import Links from "../../../../components/Links/Links";
@@ -18,15 +20,18 @@ import { displayToast } from "../../../../helpers/utils";
 import useAdminCRUD from "../../../../hooks/useAdminCRUD";
 import Warning from "../../../../components/Warning/index"
 import { handleChange } from "../../../../helpers/inputUtils";
-import useAdminContext from "../../../../hooks/useAdminContext";
 import ConditionalRender from "../../../../components/ConditionalRender";
 import { setItemToLocalStorage } from "../../../../helpers/localStoragehelper";
-import API_URLS from "../../../../api/urls";
+import { useDispatch } from "react-redux";
+import { setLoginData } from "../../../../redux/actions";
+
 
 function LoginForm({ redirectedFrom }) {
   const history = useHistory();
   const [showPassword, setShowPassword] = useState(false);
-  const { updateData } = useAdminContext();
+  const dispatch = useDispatch(); 
+
+  // const { updateData } = useAdminContext();
 
   const classes = useStyles();
 
@@ -47,6 +52,7 @@ function LoginForm({ redirectedFrom }) {
 
   const handleSignIn = () => {
     if (!loading) {
+      dispatch(setLoginData(formData));
       signIn({ data: formData });
     }
   };
@@ -58,7 +64,8 @@ function LoginForm({ redirectedFrom }) {
         displayToast("Login Successful");
         setItemToLocalStorage(AUTH_CONFIG.AUTH_SESSION_INFO, response);
         history.replace(ROUTES.DASHBOARD);
-        updateData(response);
+        dispatch(setLoginData(response))
+        // updateData(response);
       } else {
         const { message } = response;
         displayToast(message || ERRORS.SOMETHING_WENT_WRONG, "error");

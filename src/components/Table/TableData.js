@@ -15,7 +15,6 @@ const columns = [
       color: "#00008B",
     },
     render: (data, type = "column") => {
-      // console.log("🚀 ~ data:", data)
       return <a href="/profile"><div>{data["name"]}</div></a>
     }
   },

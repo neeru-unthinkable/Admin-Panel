@@ -1,12 +1,15 @@
 import { jwtDecode } from "jwt-decode";
+import { useDispatch, useSelector } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { useIdleTimer } from "react-idle-timer";
+import { setLoginData } from "../redux/actions";
 import React, { lazy, Suspense, useEffect } from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
+import API_URLS from "../api/urls";
 import {
   getItemFromLocalStorage,
   setItemToLocalStorage,
@@ -20,9 +23,7 @@ import useAdminCRUD from "../hooks/useAdminCRUD";
 import { isAuthenticated } from "../helpers/utils";
 import Logout from "../pages/Authentication/Logout";
 import NetworkDetector from "../hoc/NetworkDetector";
-import useAdminContext from "../hooks/useAdminContext";
 import ConditionalRender from "../components/ConditionalRender";
-import API_URLS from "../api/urls";
 
 const Dashboard = lazy(() => import("../pages/Dashboard"));
 const Login = lazy(() => import("../pages/Authentication/Login"));
@@ -32,36 +33,14 @@ const Error404 = lazy(() => import("../components/Errors/Error404"));
 const Routes = () => {
   const history = useHistory();
   const location = useLocation();
-  const { loading, data, updateData } = useAdminContext();
+  const dispatch = useDispatch(); 
+  const loading = useSelector(state => state.loading); 
 
   const [refreshToken, response] = useAdminCRUD({
     url: API_URLS.refreshToken,
     method: "create",
     shouldSetLoading: false,
   });
-
-  useEffect(() => {
-    if (AUTH_CONFIG.NON_AUTHENTICATED_ROUTES.includes(location.pathname))
-      return;
-    const storedData = sessionStorage.getItem(AUTH_CONFIG.ADMIN_STORAGE);
-    if (storedData) {
-      updateData(JSON.parse(storedData));
-    }
-    sessionStorage.removeItem(AUTH_CONFIG.ADMIN_STORAGE);
-  }, []);
-
-  const handleUnload = () => {
-    if (AUTH_CONFIG.NON_AUTHENTICATED_ROUTES.includes(location.pathname))
-      return;
-    sessionStorage.setItem(AUTH_CONFIG.ADMIN_STORAGE, JSON.stringify(data));
-  };
-
-  window.addEventListener("unload", handleUnload);
-  useEffect(() => {
-    return () => {
-      window.removeEventListener("unload", handleUnload);
-    };
-  }, []);
 
   const handleOnIdle = () => {
     if (AUTH_CONFIG.NON_AUTHENTICATED_ROUTES.includes(location.pathname))
@@ -103,7 +82,8 @@ const Routes = () => {
         AUTH_CONFIG.AUTH_SESSION_INFO,
         storedUserData
       );
-      updateData(storedUserData);
+      dispatch(setLoginData(storedUserData));
+      // updateData(storedUserData);
     }
   }, [response]);
 
